@@ -1,15 +1,21 @@
 import bpy
+from bpy.props import BoolProperty, PointerProperty, StringProperty
+from bpy.types import Object, Text, Operator, Panel, PropertyGroup
 
-def main(context):
-    for ob in context.scene.objects:
-        print(ob)
 
-class SEQUENCER_OP_split_text_strips(bpy.types.Operator):
+class ConfigSplit(PropertyGroup):
+    text_file: StringProperty(description="Textfile to show")
+
+class SEQUENCER_OP_split_text_strips(Operator):
     """Split text strips"""
     bl_idname = "sequencer.split_text_strips"
     bl_label = "Split Text Strips"
 
-    so: bpy.props.BoolProperty(name='Algo Boolérico', default=True)
+    source_file: StringProperty(name='File')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop_search(self, "source_file", bpy.data, 'texts')
 
     @classmethod
     def poll(cls, context):
@@ -20,14 +26,19 @@ class SEQUENCER_OP_split_text_strips(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
     def execute(self, context):
-        main(context)
+        print(self.source_file)
         return {'FINISHED'}
 
+class SEQUENCER_PT_split_text_strips(Panel):
+    pass
+
 def register():
+    bpy.utils.register_class(ConfigSplit)
     bpy.utils.register_class(SEQUENCER_OP_split_text_strips)
 
 def unregister():
     bpy.utils.unregister_class(SEQUENCER_OP_split_text_strips)
+    bpy.utils.unregister_class(ConfigSplit)
 
 if __name__ == "__main__":
     register()
