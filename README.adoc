@@ -1,0 +1,1 @@
+= Split a text strip from the lines of a text file
