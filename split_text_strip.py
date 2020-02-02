@@ -2,6 +2,15 @@ import bpy
 from bpy.props import BoolProperty, PointerProperty, StringProperty
 from bpy.types import Object, Text, Operator, Panel, PropertyGroup
 
+bl_info = {
+    'name': 'Split Sequencer Text Strip',
+    'author': 'gabriel montagné, gabriel@tibas.london',
+    'version': (0, 0, 1),
+    'blender': (2, 80, 0),
+    'description': 'Split a VSE text strip from the contents of a text file',
+    'tracker_url': 'https://github.com/gabrielmontagne/blender-addon-split-text-strip/issues'
+}
+
 def split_from_text(text):
     lines = [l.body.strip() for l in bpy.data.texts[text].lines if l.body.strip()]
     split_sequence(lines)
@@ -53,5 +62,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
