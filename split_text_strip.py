@@ -31,10 +31,10 @@ def split_sequence(lines=['aaa', 'bbb', 'cccc']):
         seq = bpy.context.selected_sequences[0]
         seq.text = line
 
-class SEQUENCER_OP_split_text_strips(Operator):
-    """Split text strips"""
-    bl_idname = "sequencer.split_text_strips"
-    bl_label = "Split Text Strips"
+class SEQUENCER_OP_split_text_strip(Operator):
+    """Split Text Strip"""
+    bl_idname = "sequencer.split_text_strip"
+    bl_label = "Split Text Strip"
 
     source_file: StringProperty(name='File')
 
@@ -55,10 +55,10 @@ class SEQUENCER_OP_split_text_strips(Operator):
         return {'FINISHED'}
 
 def register():
-    bpy.utils.register_class(SEQUENCER_OP_split_text_strips)
+    bpy.utils.register_class(SEQUENCER_OP_split_text_strip)
 
 def unregister():
-    bpy.utils.unregister_class(SEQUENCER_OP_split_text_strips)
+    bpy.utils.unregister_class(SEQUENCER_OP_split_text_strip)
 
 if __name__ == "__main__":
     register()
