@@ -2,9 +2,25 @@ import bpy
 from bpy.props import BoolProperty, PointerProperty, StringProperty
 from bpy.types import Object, Text, Operator, Panel, PropertyGroup
 
+def split_from_text(text):
+    lines = [l.body.strip() for l in bpy.data.texts[text].lines if l.body.strip()]
+    split_sequence(lines)
 
-class ConfigSplit(PropertyGroup):
-    text_file: StringProperty(description="Textfile to show")
+def split_sequence(lines=['aaa', 'bbb', 'cccc']):
+    parts = len(lines)
+    seq = bpy.context.selected_sequences[0]
+    end = seq.frame_final_end
+    start = seq.frame_final_start
+    duration = seq.frame_final_duration
+
+    assert duration > parts, 'sequence too short to be split'
+    part_duration = duration / parts
+
+    for (cut, line) in zip(range(start, end, int(part_duration)), lines):
+        if cut > start:
+            bpy.ops.sequencer.cut(frame=cut, type='SOFT', side='RIGHT')
+        seq = bpy.context.selected_sequences[0]
+        seq.text = line
 
 class SEQUENCER_OP_split_text_strips(Operator):
     """Split text strips"""
@@ -19,26 +35,23 @@ class SEQUENCER_OP_split_text_strips(Operator):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return len(context.selected_sequences) == 1
 
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
     def execute(self, context):
-        print(self.source_file)
+        split_from_text(self.source_file)
         return {'FINISHED'}
 
-class SEQUENCER_PT_split_text_strips(Panel):
-    pass
-
 def register():
-    bpy.utils.register_class(ConfigSplit)
     bpy.utils.register_class(SEQUENCER_OP_split_text_strips)
 
 def unregister():
     bpy.utils.unregister_class(SEQUENCER_OP_split_text_strips)
-    bpy.utils.unregister_class(ConfigSplit)
 
 if __name__ == "__main__":
     register()
+
+
