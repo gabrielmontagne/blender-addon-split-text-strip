@@ -1,6 +1,7 @@
-import bpy
 from bpy.props import BoolProperty, PointerProperty, StringProperty
 from bpy.types import Object, Text, Operator, Panel, PropertyGroup
+import bpy
+import re
 
 bl_info = {
     'name': 'Split Sequencer Text Strip',
@@ -11,9 +12,14 @@ bl_info = {
     'tracker_url': 'https://github.com/gabrielmontagne/blender-addon-split-text-strip/issues'
 }
 
-def split_from_text(text):
+def split_lines(text):
     lines = [l.body.strip() for l in bpy.data.texts[text].lines if l.body.strip()]
     split_sequence(lines)
+
+def split_by_paragraphs(text):
+    block = '\n'.join(l.body.strip() for l in bpy.data.texts[text].lines)
+    chunks = [chunk for chunk in re.split(r'\n{2,}', block) if chunk.strip()]
+    split_sequence(chunks)
 
 def split_sequence(lines=['aaa', 'bbb', 'cccc']):
     parts = len(lines)
@@ -37,9 +43,11 @@ class SEQUENCER_OP_split_text_strip(Operator):
     bl_label = "Split Text Strip"
 
     source_file: StringProperty(name='File')
+    split_on_empty_lines: BoolProperty(name='Split on empty lines')
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, 'split_on_empty_lines')
         layout.prop_search(self, "source_file", bpy.data, 'texts')
 
     @classmethod
@@ -51,7 +59,10 @@ class SEQUENCER_OP_split_text_strip(Operator):
         return wm.invoke_props_dialog(self)
 
     def execute(self, context):
-        split_from_text(self.source_file)
+        if self.split_on_empty_lines:
+            split_by_paragraphs(self.source_file)
+        else:
+            split_lines(self.source_file)
         return {'FINISHED'}
 
 def register():
