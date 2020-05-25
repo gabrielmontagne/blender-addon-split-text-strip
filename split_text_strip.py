@@ -33,7 +33,7 @@ def split_sequence(lines=['aaa', 'bbb', 'cccc']):
 
     for (cut, line) in zip(range(start, end, int(part_duration)), lines):
         if cut > start:
-            bpy.ops.sequencer.cut(frame=cut, type='SOFT', side='RIGHT')
+            bpy.ops.sequencer.split(frame=cut, type='SOFT', side='RIGHT')
         seq = bpy.context.selected_sequences[0]
         seq.text = line
 
