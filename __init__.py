@@ -52,7 +52,7 @@ class SEQUENCER_OP_split_text_strip(Operator):
 
     @classmethod
     def poll(cls, context):
-        return len(context.selected_sequences) == 1
+        return context.selected_sequences and len(context.selected_sequences) == 1
 
     def invoke(self, context, event):
         wm = context.window_manager
